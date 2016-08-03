@@ -2,7 +2,7 @@
 
 include ('bin/functions.php');
 
-echo parser(10, "[N:f s],[N:t f f s-s]");
+echo generate(10, "[N:f s],[N:t f f s-s],[T:01??-???-????],[D:y/m/d H:M:S]");
 
 /*
 
