@@ -1,16 +1,34 @@
 <?php
 
-$log = "";
+# Parameters
 
-function generate($rows, $definition) {
+$log = "";
+$rows = 1; # Default number of rows produced; set by "Rows" option.
+$outfile = "default.csv";
+$outfile_path = "data";
+$mode = ""; # Defines the mode for data target; create|insert (for db) or outfile (for csv).
+$table_name = "";
+
+
+function generate($definition, $options) {
 	
-	writeLog("generate(): " . $definition);
-	
+	writeLog("generate(): Data Definition: " . $definition);	
+	writeLog("generate(): Options: " . $options);	
+
+	$data = "";
+	$header = "";
+
 	$columns = explode(",", $definition);
 	$num_of_columns = count($columns);
-	$data = "";
 	
-	for ($r = 0; $r < $rows; $r++) {
+	# Parse options
+	parseOptions($options);
+	
+	# Headers
+	$header = parseHeaders($definition);
+	
+	
+	for ($r = 0; $r < $GLOBALS['rows']; $r++) {
 	
 		for ($c = 0; $c < $num_of_columns; $c++) {
 			writeLog("generate(): " . $columns[$c]);
@@ -20,111 +38,130 @@ function generate($rows, $definition) {
 				$data = $data . "\"" . generateTelephone(substr($columns[$c], 3, strlen($columns[$c])-4)) . "\",";
 			} elseif (substr($columns[$c], 1, 1) == "D") { # Date / Time: [D:<rest of definition>]
 				$data = $data . "\"" . generateDate(substr($columns[$c], 3, strlen($columns[$c])-4)) . "\",";
-			}			
+			} elseif (substr($columns[$c], 1, 1) == "A") { # Address: [A:<rest of definition>]
+				$data = $data . "\"" . generateAddress(substr($columns[$c], 3, strlen($columns[$c])-4)) . "\",";
+			}				
 		}
 		
 		$data = substr($data, 0, strlen($data)-1) . "<br/>\n";
+		
 	}
 
+	if ($GLOBALS['mode'] == "outfile") {
+		writeLog("generate(): Producing output file...");	
+		writeFile($header . "\n" . $data);
+	} elseif ($GLOBALS['mode'] == "create" || $GLOBALS['mode'] == "insert") {
+		writeLog("generate(): Writing to database...");	
+		writeDatabase($header, $data);
+	}
 	
 	return $data;
 	
 }
 
+function parseOptions($options) {
 
-function generateName($definition) {
+	writeLog("parseOptions(): Options: " . $options);	
+
+	$options = explode(",", $options);
+	$num_of_options = count($options);
+	for ($o = 0; $o < $num_of_options; $o++) {
+		$option_components = explode("=", $options[$o]);
+		if ($option_components[0] == "Rows") { # Rows
+			writeLog("parseOptions(): Rows: " . $option_components[1]);
+			$GLOBALS['rows'] = $option_components[1];
+		} elseif ($option_components[0] == "Outfile") { # Outfile
+			writeLog("parseOptions(): Outfile: " . $option_components[1]);
+			$GLOBALS['outfile'] = $option_components[1];
+			$GLOBALS['mode'] = "outfile";
+		} elseif ($option_components[0] == "Mode") { # DML Mode
+			writeLog("parseOptions(): Data Mode: " . $option_components[1]);
+			$GLOBALS['mode'] = $option_components[1];
+		} elseif ($option_components[0] == "Table") { # Table Name
+			writeLog("parseOptions(): Table Name: " . $option_components[1]);
+			$GLOBALS['table_name'] = $option_components[1];
+		}
+		
+	}
 	
-	writeLog("generateName(): " . $definition);
-	$elements = str_split($definition);
-	$number_of_elements = count($elements);
-	$name = "";
+}
+
+function parseHeaders($definition) {
 	
-	for ($e = 0; $e < $number_of_elements; $e++) {
-		if ($elements[$e] == "t") { # title
-			$titles = file('bin/lists/titles.txt');
-			$name = $name . trim(ucwords(strtolower($titles[rand(0, count($titles)-1)])));
-		} elseif ($elements[$e] == "f") { # forename
-			$forenames = file('bin/lists/forenames.txt');
-			$name = $name . trim(ucwords(strtolower($forenames[rand(0, count($forenames)-1)])));
-		} elseif ($elements[$e] == "s") { # surname
-			$surnames = file('bin/lists/surnames.txt');
-			$name = $name . trim(ucwords(strtolower($surnames[rand(0, count($surnames)-1)])));
-		} else {
-			$name = $name . $elements[$e]; # Just append the character
+	writeLog("parseHeaders(): Definition: " . $definition);	
+	
+	$header = "";
+	
+	preg_match_all("/[[][A-Z]/", $definition, $fields);
+	$num_fields = count($fields[0]);
+	writeLog("parseHeaders(): Columns: " . $num_fields);	
+	
+	for ($f = 0; $f < $num_fields; $f++) {
+		if (substr($fields[0][$f], 1, 1) == "N") { # Name: [N:<rest of definition>]
+			$header = $header . "name" . $f . ",";
+		} elseif (substr($fields[0][$f], 1, 1) == "T") { # Telephone: [T:<rest of definition>]
+			$header = $header . "telephone" . $f . ",";
+		} elseif (substr($fields[0][$f], 1, 1) == "D") { # Date / Time: [D:<rest of definition>]
+			$header = $header . "date" . $f . ",";
+		} elseif (substr($fields[0][$f], 1, 1) == "A") { # Address: [A:<rest of definition>]
+			$header = $header . "address" . $f . ",";
 		}
 	}
 	
-	writeLog("generateName(): " . $name);
+	$header = substr($header, 0, strlen($header)-1);
 	
-	return $name;
+	writeLog("parseHeaders(): Header: " . $header);	
 	
-}
-
-function generateTelephone($definition) {
-	
-	writeLog("generateTelephone(): " . $definition);
-	$elements = str_split($definition);
-	$number_of_elements = count($elements);
-	$telephone = "";	
-
-	for ($t = 0; $t < $number_of_elements; $t++) {
-		if ($elements[$t] == "?") { # number
-			srand();
-			$telephone = $telephone . rand(0,9);
-		} else {
-			$telephone = $telephone . $elements[$t]; # Just append the character
-		}
-	}
-
-	writeLog("generateTelephone(): " . $telephone);
-	
-	return $telephone;
+	return $header;
 	
 }
 
-function generateDate($definition) {
-
-	writeLog("generateDate(): " . $definition);
-	$elements = str_split($definition);
-	$number_of_elements = count($elements);
-	$datetime = "";
-
-	for ($d = 0; $d < $number_of_elements; $d++) {
-		if ($elements[$d] == "y") { # year
-			$datetime = $datetime . mt_rand(1970, date('Y'));
-		} elseif ($elements[$d] == "m") { # month
-			$datetime = $datetime . str_pad(mt_rand(1, 12),2,"0", STR_PAD_LEFT);
-		} elseif ($elements[$d] == "d") { # day
-			$datetime = $datetime . str_pad(mt_rand(1, 31),2,"0", STR_PAD_LEFT);
-		} elseif ($elements[$d] == "H") { # hour
-			$datetime = $datetime . str_pad(mt_rand(0, 23),2,"0", STR_PAD_LEFT);
-		} elseif ($elements[$d] == "M") { # minute
-			$datetime = $datetime . str_pad(mt_rand(0, 59),2,"0", STR_PAD_LEFT);
-		} elseif ($elements[$d] == "S") { # second
-			$datetime = $datetime . str_pad(mt_rand(0, 59),2,"0", STR_PAD_LEFT);
-		} else {
-			$datetime = $datetime . $elements[$d]; # Just append the character
+function getMaxFieldLength($field_number, $rows) {
+	
+	$max_length = 0;
+	
+	writeLog("getMaxFieldLength(): Field Number: " . $field_number);
+	
+	# Need to go through each row
+	for ($r = 0;  $r < count($rows); $r++) {
+		writeLog("getMaxFieldLength(): Row Data: " . $rows[$r]);
+		
+		$columns = explode("\",", $rows[$r]); # Explode the contents by comma
+		
+		writeLog("getMaxFieldLength(): Number of columns: " . count($columns));
+		
+		# Then get the length of $field_number, and update max_length
+		writeLog("getMaxFieldLength(): Requested Column Data: " . $columns[$field_number]);
+		if (strlen($columns[$field_number]) > $max_length) {
+			$max_length = strlen($columns[$field_number]);
 		}
+			
 	}
 	
-	writeLog("generateTelephone(): " . $datetime);
+	writeLog("getMaxFieldLength(): Max length of Field " . $field_number . " is " . $max_length . "");
 	
-	return $datetime;
-	
-}
-
-
-function outputLog() {
-	
-	echo "<hr>Debug Log<p>" . $GLOBALS['log'];
+	return $max_length;
 	
 }
 
-function writeLog($message) {
+function getColumnType($field) {
 	
-	$GLOBALS['log'] = $GLOBALS['log'] . date('Y-m-d H:i:s') . ": " . $message . "<br/>\n";
+	$type = "";
+	
+	if (substr($field, 0, 4) == "name") {
+		$type = "varchar";
+	} elseif (substr($field, 0, 4) == "addr") {
+		$type = "varchar";
+	} elseif (substr($field, 0, 4) == "date") {
+		$type = "varchar";
+	} elseif (substr($field, 0, 4) == "tele") {
+		$type = "varchar";
+	}
+	
+	writeLog("getColumnType(): Field Type: " . $type);
+	
+	return $type;
 	
 }
-
 
 ?>

@@ -1,32 +1,14 @@
 <?php
 
+error_reporting(E_ALL ^ E_DEPRECATED);
+
 include ('bin/functions.php');
+include ('bin/mysql_functions.php');
+include ('bin/log_functions.php');
+include ('bin/file_functions.php');
+include ('bin/data_functions.php');
 
-echo generate(10, "[N:f s],[N:t f f s-s],[T:01??-???-????],[D:y/m/d H:M:S]");
-
-/*
-
-echo generateName('f s') . "<p>";
-
-echo generateName('t f s') . "<p>";
-
-echo generateName('t f f s') . "<p>";
-
-echo generateName('f f f s-s') . "<p>";
-
-echo generateName('f f s') . "<p>";
-
-echo generateName('t t f s') . "<p>";
-
-echo generateName('t-t f s') . "<p>";
-
-echo generateName('t f-f f s-s') . "<p>";
-
-echo generateName('f-f s') . "<p>";
-
-echo generateName('f') . "<p>";
-
-*/
+echo generate("[N:t],[N:f],[N:s],[A:N S|T|R|P],[D:y/m/d],[D:H:M:S],[T:01??-???-????],[T:07???-??????]", "Rows=10,Outfile=data.csv,Mode=insert,Table=People4");
 
 outputLog();
 

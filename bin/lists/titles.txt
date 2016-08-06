@@ -11,9 +11,6 @@ Gov
 Rep
 Sen
 Amb
-Pvt
-Cpl
-Sgt
 Maj
 Capt
 Cmdr
