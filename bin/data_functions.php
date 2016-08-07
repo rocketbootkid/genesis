@@ -135,7 +135,7 @@ function generateStreet() {
 	$first = file("bin/lists/streetnames_part_1.txt");
 	$second = file("bin/lists/streetnames_part_2.txt");
 	srand();
-	$streetname = ucwords(strtolower(trim($first[mt_rand(0, count($first))]) . " " . trim($second[mt_rand(0, count($second))])));
+	$streetname = ucwords(strtolower(trim($first[mt_rand(0, count($first)-1)]) . " " . trim($second[mt_rand(0, count($second)-1)])));
 	
 	writeLog("generateStreet(): " . $streetname);
 	

@@ -8,13 +8,17 @@ $outfile = "default.csv";
 $outfile_path = "data";
 $mode = ""; # Defines the mode for data target; create|insert (for db) or outfile (for csv).
 $table_name = "";
+$command_log = "log/commands.log";
 
 
 function generate($definition, $options) {
 	
 	writeLog("generate(): Data Definition: " . $definition);	
-	writeLog("generate(): Options: " . $options);	
+	writeLog("generate(): Options: " . $options);
 
+	# Log Requested
+	logRequest($definition, $options);
+	
 	$data = "";
 	$header = "";
 
@@ -26,7 +30,6 @@ function generate($definition, $options) {
 	
 	# Headers
 	$header = parseHeaders($definition);
-	
 	
 	for ($r = 0; $r < $GLOBALS['rows']; $r++) {
 	
@@ -47,10 +50,14 @@ function generate($definition, $options) {
 		
 	}
 
-	if ($GLOBALS['mode'] == "outfile") {
+	# Produce CSV file
+	if ($GLOBALS['mode'] == "file") {
 		writeLog("generate(): Producing output file...");	
-		writeFile($header . "\n" . $data);
-	} elseif ($GLOBALS['mode'] == "create" || $GLOBALS['mode'] == "insert") {
+		writeCSVFile($header . "\n" . $data);
+	}
+	
+	# Write data to MySQL
+	if ($GLOBALS['mode'] == "create" || $GLOBALS['mode'] == "insert") {
 		writeLog("generate(): Writing to database...");	
 		writeDatabase($header, $data);
 	}

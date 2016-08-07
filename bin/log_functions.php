@@ -2,7 +2,11 @@
 
 	function outputLog() {
 		
-		echo "<hr>Debug Log<p>" . $GLOBALS['log'];
+		$log_data = $GLOBALS['log'];
+		
+		$log_data = str_replace("ERROR", "<strong>ERROR</strong>", $log_data);
+		
+		echo "<hr>Debug Log<p>" . $log_data;
 		
 	}
 

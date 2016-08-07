@@ -25,24 +25,15 @@ function writeDatabase($fields, $data) {
 function createDatabase($fields, $rows) {
 	
 	$create_table = "";
-	
-	# Create schema if it's not already there
-	writeLog("writeDatabase(): Creating Schema 'genesis', if it doesn't already exist.");
-	$ddl = "CREATE SCHEMA IF NOT EXISTS genesis;";
-	$status = mysqlDDL($ddl);
-
-	# Select schema
-	writeLog("writeDatabase(): Using Schema 'genesis'");
-	$ddl = "USE genesis;";
-	$status = mysqlDDL($ddl);
-	
 	$table_name = "";
+	
+	$status = setupDatabase();
 	
 	if ($status == 1) { # Create Table
 		
 		# Determine how many tables with the same name exist already, and then suffix a number
 		$sql = "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'genesis' AND table_name LIKE '" . $GLOBALS['table_name'] . "%';";
-		writeLog("writeDatabase(): Count Table SQL: " . $sql);
+		writeLog("createDatabase(): Count Table SQL: " . $sql);
 		$result = mysqlSQL($sql);
 		
 		$table_count = $result[0][0];
@@ -71,18 +62,34 @@ function createDatabase($fields, $rows) {
 	
 		$status = mysqlDDL($create_table);
 		if ($status != 1) {
-			writeLog("writeDatabase(): Table creation didn't work!");
-			writeLog("writeDatabase(): Here's the table DDL: " . $create_table);
+			writeLog("createDatabase(): ERROR: Table creation didn't work!");
+			writeLog("createDatabase(): ERROR: Here's the table DDL: " . $create_table);
 			$table_name = "";
 		} else {
-			writeLog("writeDatabase(): Table '" . $table_name . "' created!");
+			writeLog("createDatabase(): Table '" . $table_name . "' created!");
 		}
 	
 	} else {
-		writeLog("writeDatabase(): Schema creation failed: " . $status);
+		writeLog("createDatabase(): ERROR: Schema creation failed: " . $status);
 	}
 	
 	return $table_name;
+	
+}
+
+function setupDatabase() {
+	
+	# Create schema if it's not already there
+	writeLog("setupDatabase(): Creating Schema 'genesis', if it doesn't already exist.");
+	$ddl = "CREATE SCHEMA IF NOT EXISTS genesis;";
+	$status = mysqlDDL($ddl);
+
+	# Select schema
+	writeLog("setupDatabase(): Using Schema 'genesis'");
+	$ddl = "USE genesis;";
+	$status = mysqlDDL($ddl);
+
+	return $status;
 	
 }
 
@@ -92,7 +99,9 @@ function insertData($table_name, $columns, $rows) {
 	
 	if ($table_name != "") {
 		
-		$number_rows = count($rows);
+		$number_rows = count($rows)-1;
+		writeLog("insertData(): Rows of Data: " . $number_rows);
+		
 		$columns = implode(",", $columns);
 		
 		for ($r = 0; $r < $number_rows; $r++) {
@@ -104,11 +113,13 @@ function insertData($table_name, $columns, $rows) {
 			if ($status == 1) {
 				writeLog("insertData(): Insert succeeded: " . $dml);
 			} else {
-				writeLog("insertData(): Insert failed: " . $dml);
+				writeLog("insertData(): ERROR: Insert failed: " . $dml);
 			}
 			
 		}
 		
+	} else {
+		writeLog("insertData(): ERROR: No table name provided");
 	}
 
 }
@@ -117,7 +128,7 @@ function mysqlConnect() {
 	
 	$connection = mysql_connect('localhost', 'root', 'root');
 	if (!$connection) {
-		die(writeLog("mysqlConnect(): Cannot connect to MySQL: " . mysql_error()));
+		die(writeLog("mysqlConnect(): ERROR: Cannot connect to MySQL: " . mysql_error()));
 	} else {
 		writeLog("mysqlConnect(): Connected");
 	}
@@ -135,7 +146,7 @@ function mysqlDDL($command) {
 	mysql_query($command, $connection);
 	
 	if (mysql_errno()) { 
-		writeLog("mysqlDDL(): Error executing command: " . mysql_errno() . ": " . mysql_error() . ""); 
+		writeLog("mysqlDDL(): ERROR: Error executing command: " . mysql_errno() . ": " . mysql_error() . ""); 
 		$flag = mysql_errno();
 	}
 
@@ -152,7 +163,7 @@ function mysqlSQL($command) {
 	$result = mysql_query($command, $connection);
 	
 	if (mysql_errno()) { 
-		writeLog("mysqlSQL(): Error executing command: " . mysql_errno() . ": " . mysql_error() . ""); 
+		writeLog("mysqlSQL(): ERROR: Error executing command: " . mysql_errno() . ": " . mysql_error() . ""); 
 		$flag = mysql_errno();
 	}
 	

@@ -1,6 +1,19 @@
 <?php
 
-function writeFile($data) {
+function logRequest($definition, $options) {
+	
+	$filename = $GLOBALS['command_log'];
+	$data = date('Y-m-d H:i:s') . ": Definition: " . $definition . ", Options: " . $options . "\n";
+	
+	$file = fopen($filename, "a+");
+	fwrite($file, $data);
+	fclose($file);
+	
+	writeLog("logRequest(): Command written to command log.");
+	
+}
+
+function writeCSVFile($data) {
 	
 	$filename = $GLOBALS['outfile'];
 	$path = $GLOBALS['outfile_path'];
@@ -14,17 +27,21 @@ function writeFile($data) {
 	fwrite($file, $data);
 	fclose($file);
 	
+	writeLog("writeCSVFile(): CSV file written.");
+	
 }
 
 function writeDDLFile($table, $ddl) {
 	
 	$path = $GLOBALS['outfile_path'];
 	
-	writeLog("writeFile(): Path: " . $path . "/" . $table . ".sql");
+	writeLog("writeDDLFile(): Path: " . $path . "/" . $table . ".sql");
 	
 	$file = fopen($path . "/" . $table . ".sql", "w");
 	fwrite($file, $ddl);
 	fclose($file);
+	
+	writeLog("writeDDLFile(): DDL file written.");
 	
 }
 
