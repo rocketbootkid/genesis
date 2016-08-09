@@ -1,18 +1,5 @@
 <?php
 
-function logRequest($definition, $options) {
-	
-	$filename = $GLOBALS['command_log'];
-	$data = date('Y-m-d H:i:s') . ": Definition: " . $definition . ", Options: " . $options . "\n";
-	
-	$file = fopen($filename, "a+");
-	fwrite($file, $data);
-	fclose($file);
-	
-	writeLog("logRequest(): Command written to command log.");
-	
-}
-
 function writeCSVFile($data) {
 	
 	$filename = $GLOBALS['outfile'];

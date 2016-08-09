@@ -12,11 +12,7 @@
 2016-08-07 12:02:58: Definition: [N:t],[N:f],[N:s],[A:N S|T|R|P],[D:y/m/d],[D:H:M:S],[T:01??-???-????],[T:07???-??????], Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
 2016-08-07 12:04:07: Definition: [N:t],[N:f],[N:s],[A:N S|T|R|P],[D:y/m/d],[D:H:M:S],[T:01??-???-????],[T:07???-??????], Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
 2016-08-07 12:05:55: Definition: [N:t],[N:f],[N:s],[A:N S|T|R|P],[D:y/m/d],[D:H:M:S],[T:01??-???-????],[T:07???-??????], Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
-2016-08-07 13:02:54: Definition: , Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
-2016-08-07 13:03:12: Definition: , Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
 2016-08-07 13:03:36: Definition: [N:t],[N:f],[N:s],[A:N S|T|R|P],[D:y/m/d],[D:H:M:S],[T:01??-???-????],[T:07???-??????], Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
-2016-08-07 13:03:56: Definition: , Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
-2016-08-07 13:04:20: Definition: , Options: "Rows=10,Outfile=data.csv,Mode=insert,Table=People4"
 2016-08-07 13:04:42: Definition: [N:t],[N:f],[N:s],[A:N S|T|R|P],[D:y/m/d],[D:H:M:S],[T:01??-???-????],[T:07???-??????], Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
 2016-08-07 13:05:35: Definition: [N:t],[N:f],[N:s],[A:N S|T|R|P],[D:y/m/d],[D:H:M:S],[T:01??-???-????],[T:07???-??????], Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
 2016-08-07 13:07:51: Definition: [N:t],[N:f],[N:s],[A:N S|T|R|P],[D:y/m/d],[D:H:M:S],[T:01??-???-????],[T:07???-??????], Options: Rows=10,Outfile=data.csv,Mode=insert,Table=People4
@@ -59,11 +55,6 @@
 2016-08-07 22:16:52: Definition: [N:f],[N:s], Options: Rows=10,Mode=create,Table=names
 2016-08-07 22:18:50: Definition: [N:f],[N:s], Options: Rows=10,Mode=create,Table=names
 2016-08-07 22:20:14: Definition: [N:f],[N:s], Options: Rows=10,Mode=create,Table=names
-2016-08-07 22:20:21: Definition: [:],[:],[:],[:],[:],[:],[:],[:],[:],[:], Options: 
-2016-08-07 22:20:58: Definition: [:],[:],[:],[:],[:],[:],[:],[:],[:],[:], Options: 
-2016-08-07 22:21:05: Definition: , Options: 
-2016-08-07 22:21:13: Definition: , Options: 
-2016-08-07 22:22:09: Definition: , Options: 
-2016-08-07 22:22:19: Definition: , Options: 
-2016-08-07 22:22:23: Definition: , Options: 
 2016-08-07 22:22:59: Definition: [N:f],[N:f],[N:s], Options: Rows=50,Mode=create,Table=fred
+2016-08-09 21:01:41: Definition: [N:f s], Options: Rows=10,Mode=file,Outfile=names.csv
+2016-08-09 21:03:06: Definition: [N:f],[N:s], Options: Rows=10,Mode=file,Outfile=hamster.csv

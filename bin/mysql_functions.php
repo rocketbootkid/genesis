@@ -124,6 +124,31 @@ function insertData($table_name, $columns, $rows) {
 
 }
 
+function logRequest($definition, $options) {
+	
+	$filename = $GLOBALS['command_log'];
+	$data =  "\n" . date('Y-m-d H:i:s') . ": Definition: " . $definition . ", Options: " . $options;
+	
+	# Check if that definition / options set already exists
+	$sql = "SELECT count(*) FROM genesis.definitions WHERE definition = '" . $definition . "' AND options = '" . $options . "';";
+	writeLog("logRequest(): Check if Exists SQL: " . $sql);
+	$results = mysqlSQL($sql);
+	
+	# If not, add it to the database
+	if ($results[0][0] == 0) {
+		writeLog("logRequest(): No matching existing definitions");
+		$dml = "INSERT INTO genesis.definitions (definition, options) VALUES ('" . $definition . "', '" . $options . "');";
+		writeLog("logRequest(): Insert Definition: " . $dml);
+		mysqlDDL($dml);
+	
+	} else {
+		writeLog("logRequest(): Matching existing definition found; discarding");
+	}
+	
+	writeLog("logRequest(): Command written to command log.");
+	
+}
+
 function mysqlConnect() {
 	
 	$connection = mysql_connect('localhost', 'root', 'root');

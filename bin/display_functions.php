@@ -2,8 +2,10 @@
 
 function selectRows() {
 	
-	echo "<form id='form_rows' method='post' action='datagen.php'>";
-	echo "<table cellpadding=3 cellspacing=0 border=1><tr><td>Step 1. How many columns of data do you want to generate?";
+	echo "<form id='form_rows' method='post' action='define.php'>";
+	echo "<table cellpadding=3 cellspacing=0 border=1>";
+	echo "<tr bgcolor=#ddd><td colspan=3>Step 1. Generate a new data definition</tr>";
+	echo "<tr><td>How many columns of data do you want to generate?";
 	echo "<td><input id='url' type='text' name='rows' size='10'></input>";
 	echo "<td><input name='button' type='submit' value='Next >'/></tr><table>";
 	echo "</form>";
@@ -14,7 +16,7 @@ function buildSelector($columns) {
 	
 	writeLog("buildSelector(): Columns: " . $columns);
 	
-	echo "<form id='form_definition' method='post' action='datagen.php'>";
+	echo "<form id='form_definition' method='post' action='storeDefinition.php'>";
 	echo "<table cellpadding=3 cellspacing=0 border=1>";
 	echo "<tr><td colspan=5 bgcolor=#ddd>Step 2. Define your columns</tr>";
 		
@@ -98,9 +100,10 @@ function convertDataToTable($data) {
 	# Takes long string of CSV text (with br between lines) and renders as table
 
 	$rows = explode("<br/>", $data);
-	writeLog("convertDataToTable(): Rows: " . count($rows)-1);
+	$row_count = count($rows) - 1;
+	writeLog("convertDataToTable(): Rows: " . $row_count);
 	
-	$table = "<table cellpadding=3 cellspacing=1 border=1 width=100%>";
+	$table = "<p><table cellpadding=3 cellspacing=0 border=1 width=100%>";
 	
 	for ($r = 0; $r < count($rows)-1; $r++) {
 		
@@ -114,6 +117,25 @@ function convertDataToTable($data) {
 	$table = $table . "</table>";
 	
 	echo $table;
+	
+}
+
+function displayCommandHistory() {
+	
+	$command_log = file_get_contents('log/commands.log');
+	$pattern = "/[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}: /";
+	$commands_filtered = preg_replace($pattern, "", $command_log);
+	$commands_array = explode("\n", $commands_filtered);
+	
+	echo "<p><table cellpadding=3 cellspacing=0 border=1 width=100%>";
+	echo "<tr bgcolor=#ddd><td>Step 1. Select an existing data definition</tr>";
+	
+	$unique_commands = array_unique($commands_array, SORT_REGULAR);
+	
+	foreach($unique_commands as $command){
+	   echo "<tr><td>" . $command . "</tr>";
+	}
+	echo "</table>";
 	
 }
 
