@@ -118,26 +118,6 @@ function convertDataToTable($data) {
 	
 	echo $table;
 	
-}
-
-function displayCommandHistory() {
-	
-	$command_log = file_get_contents('log/commands.log');
-	$pattern = "/[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}: /";
-	$commands_filtered = preg_replace($pattern, "", $command_log);
-	$commands_array = explode("\n", $commands_filtered);
-	
-	echo "<p><table cellpadding=3 cellspacing=0 border=1 width=100%>";
-	echo "<tr bgcolor=#ddd><td>Step 1. Select an existing data definition</tr>";
-	
-	$unique_commands = array_unique($commands_array, SORT_REGULAR);
-	
-	foreach($unique_commands as $command){
-	   echo "<tr><td>" . $command . "</tr>";
-	}
-	echo "</table>";
-	
-}
-
+} 
 
 ?>

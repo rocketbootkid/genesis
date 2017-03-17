@@ -8,6 +8,8 @@
 
 <?php
 
+# Edit
+
 error_reporting(E_ALL ^ E_DEPRECATED);
 
 include ('bin/functions.php');
