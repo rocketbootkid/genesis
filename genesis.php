@@ -16,20 +16,30 @@ include ('bin/log_functions.php');
 include ('bin/file_functions.php');
 include ('bin/data_functions.php');
 include ('bin/display_functions.php');
+include ('bin/command_functions.php');
 
-selectRows();
+if (!isset($_POST['mode']) && !isset($_POST['mode'])) {
+	selectRows();
+	echo "<p>OR<p>";
+	displayCommands();
+}
 
-echo "<p>OR<p>";
+if (isset($_POST['mode']) && $_POST['mode'] == "define") {
+	buildSelector($_POST['rows']);	
+}
 
-displayCommandHistory();
-
-
-if (isset($_POST['request']) && $_POST['request'] == 1) {
+if (isset($_POST['mode']) && $_POST['mode'] == "create") {
 	$command = buildGenerateCommand();
 	$_POST['rows'] = ""; # empty the POST data
 	$data = generate($command[0], $command[1]);
-	convertDataToTable($data);
 }
+
+if (isset($_POST['mode']) && $_POST['mode'] == "create_existing") {
+	$options = "Rows=" . $_POST['rows'] . ",Mode=" . $_POST['outtype'] . ",Outfile=" . $_POST['file'];
+	$data = generate($_POST['components'], $options);
+}
+
+listDataFiles();
 
 outputLog();
 

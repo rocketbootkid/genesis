@@ -2,11 +2,11 @@
 
 function selectRows() {
 	
-	echo "<form id='form_rows' method='post' action='define.php'>";
+	echo "<form id='form_rows' method='post' action='genesis.php'>";
 	echo "<table cellpadding=3 cellspacing=0 border=1>";
 	echo "<tr bgcolor=#ddd><td colspan=3>Step 1. Generate a new data definition</tr>";
 	echo "<tr><td>How many columns of data do you want to generate?";
-	echo "<td><input id='url' type='text' name='rows' size='10'></input>";
+	echo "<td><input id='url' type='text' name='rows' size='10'></input><input type='hidden' name='mode' value='define'>";
 	echo "<td><input name='button' type='submit' value='Next >'/></tr><table>";
 	echo "</form>";
 
@@ -16,7 +16,7 @@ function buildSelector($columns) {
 	
 	writeLog("buildSelector(): Columns: " . $columns);
 	
-	echo "<form id='form_definition' method='post' action='storeDefinition.php'>";
+	echo "<form id='form_definition' method='post' action='genesis.php'>";
 	echo "<table cellpadding=3 cellspacing=0 border=1>";
 	echo "<tr><td colspan=5 bgcolor=#ddd>Step 2. Define your columns</tr>";
 		
@@ -42,7 +42,7 @@ function buildSelector($columns) {
 	echo "<tr><td colspan=5><input name='button' type='submit' value='Create'/></tr></table>";
 	
 	echo "<input type='hidden' value='" . $columns . "' name='columns'></input>";
-	echo "<input type='hidden' value='1' name='request'></input>";
+	echo "<input type='hidden' value='create' name='mode'></input>";
 	
 	echo "</form><p>";	
 	
@@ -95,6 +95,27 @@ function buildGenerateCommand() {
 	
 }
 
+function displaySample($outfile, $rows) {
+	
+	$fileContents = file($outfile);
+	
+	$count = 0;
+	echo "<p><table border=1 cellpadding=3 cellspacing=1>";
+	foreach ($fileContents as $line) {
+		$count++;
+		if ($count <= $rows && $line <> "") {
+			$data = explode(",", $line);
+			echo "<tr>";
+			for ($col = 0; $col < count($data); $col++) {
+				echo "<td>" . str_replace("\"", "", $data[$col]);
+			}
+			echo "</tr>";
+		}
+	}
+	echo "</table><p><a href='genesis.php'>Home</a>";
+}
+
+
 function convertDataToTable($data) {
 
 	# Takes long string of CSV text (with br between lines) and renders as table
@@ -118,26 +139,21 @@ function convertDataToTable($data) {
 	
 	echo $table;
 	
-}
+} 
 
-function displayCommandHistory() {
+function listDataFiles() {
 	
-	$command_log = file_get_contents('log/commands.log');
-	$pattern = "/[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}: /";
-	$commands_filtered = preg_replace($pattern, "", $command_log);
-	$commands_array = explode("\n", $commands_filtered);
+	// Outputs a list of available data files
 	
-	echo "<p><table cellpadding=3 cellspacing=0 border=1 width=100%>";
-	echo "<tr bgcolor=#ddd><td>Step 1. Select an existing data definition</tr>";
-	
-	$unique_commands = array_unique($commands_array, SORT_REGULAR);
-	
-	foreach($unique_commands as $command){
-	   echo "<tr><td>" . $command . "</tr>";
+	echo "<p>Existing Data Files<p>";
+
+	$files = scandir('data');	
+	foreach ($files as $file) {
+		if (strlen($file) > 2) {
+			echo "<a href='data/" . $file . "'>" . $file . "</a><br/>";
+		}
 	}
-	echo "</table>";
 	
 }
-
 
 ?>

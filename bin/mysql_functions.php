@@ -124,7 +124,7 @@ function insertData($table_name, $columns, $rows) {
 
 }
 
-function logRequest($definition, $options) {
+function logRequestDb($definition, $options) {
 	
 	$filename = $GLOBALS['command_log'];
 	$data =  "\n" . date('Y-m-d H:i:s') . ": Definition: " . $definition . ", Options: " . $options;
@@ -149,9 +149,30 @@ function logRequest($definition, $options) {
 	
 }
 
+function displayCommandHistoryDb() {
+	
+	$sql = "SELECT DISTINCT concat(`definition`, '|', `options`) from genesis.definitions;";
+	writeLog("displayCommandHistory(): SQL: " . $sql);
+	$results = mysqlSQL($sql);
+	
+	echo "<p><table cellpadding=3 cellspacing=0 border=1 width=100%>";
+	echo "<tr bgcolor=#ddd><td>Step 1. Select an existing data definition</tr>";
+	
+	$num_results = count($results);
+	writeLog("displayCommandHistory(): Results: " . $num_results);
+	
+	print_r($results);
+	
+	for ($r = 0; $r < count($results); $r++) {
+		echo "<tr><td>" . $results[0] . "</tr>";
+	}
+	echo "</table>";
+	
+}
+
 function mysqlConnect() {
 	
-	$connection = mysql_connect('localhost', 'root', 'root');
+	$connection = mysql_connect('localhost', 'root', '');
 	if (!$connection) {
 		die(writeLog("mysqlConnect(): ERROR: Cannot connect to MySQL: " . mysql_error()));
 	} else {

@@ -17,7 +17,7 @@ function generate($definition, $options) {
 	writeLog("generate(): Options: " . $options);
 
 	# Log Requested
-	logRequest($definition, $options);
+	logCommand($definition, $options);
 	
 	$data = "";
 	$header = "";
@@ -50,10 +50,21 @@ function generate($definition, $options) {
 		
 	}
 
+	writeLog("generate(): Output mode: " . $GLOBALS['mode']);	
+	
 	# Produce CSV file
-	if ($GLOBALS['mode'] == "file") {
+	if ($GLOBALS['mode'] == "outfile") {
 		writeLog("generate(): Producing output file...");	
 		writeCSVFile($header . "\n" . $data);
+		
+		$options = explode(",", $options);
+		$parameters = explode("=", $options[2]);
+		
+		$outfilePath = "data/" . $parameters[1];
+		echo $GLOBALS['rows'] . " rows of data written to <a href='" . $outfilePath . "'>" . $parameters[1] . "</a>";
+	
+		displaySample($outfilePath, 10);
+	
 	}
 	
 	# Write data to MySQL
