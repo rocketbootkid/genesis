@@ -141,6 +141,7 @@ function convertDataToTable($data) {
 	
 } 
 
+<<<<<<< HEAD
 function listDataFiles() {
 	
 	// Outputs a list of available data files
@@ -156,4 +157,6 @@ function listDataFiles() {
 	
 }
 
+=======
+>>>>>>> origin/master
 ?>

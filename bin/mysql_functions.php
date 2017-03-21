@@ -149,7 +149,11 @@ function logRequestDb($definition, $options) {
 	
 }
 
+<<<<<<< HEAD
 function displayCommandHistoryDb() {
+=======
+function displayCommandHistory() {
+>>>>>>> origin/master
 	
 	$sql = "SELECT DISTINCT concat(`definition`, '|', `options`) from genesis.definitions;";
 	writeLog("displayCommandHistory(): SQL: " . $sql);
